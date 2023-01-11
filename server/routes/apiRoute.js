@@ -3,8 +3,25 @@ const router = express.Router();
 const apiController = require('../controller/api');
 
 // @desc Post/Create new post
-// @route POST /post
+// @route POST api/post/createPost
 
-router.post('/post', apiController.newPost);
+router.post('/post/createPost', apiController.newPost);
+
+// @desc Get all posts
+// @route GET api/post/all
+
+router.get('/post/all', apiController.getAllPosts);
+
+// @desc Update post
+// @route PUT api/post/update
+
+router.put('/post/update', apiController.updatePost);
+
+// @desc Delete post
+// @route DELETE api/post/remove
+
+router.delete('/post/remove', apiController.deletePost);
+
+
 
 module.exports = router;
