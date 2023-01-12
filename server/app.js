@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const connectDB = require('./config/db.js');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 const app = express();
 
@@ -18,6 +19,9 @@ app.use(morgan('dev'))
 
 // Database Connection
 connectDB()
+
+// Initialize cors
+app.use(cors());
 
 // app.post('/api/createPost', (req, res) => {
 //     console.log(req.body);
