@@ -1,7 +1,7 @@
 {
-  "name": "blogserver",
+  "name": "server",
   "version": "1.0.0",
-  "description": "Simple server api for Skyler Blog project",
+  "description": "Simple server api for Skyler project",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
