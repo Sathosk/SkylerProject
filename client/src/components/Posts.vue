@@ -1,6 +1,6 @@
 <template>
     <section class="main-content">
-        <section class="post-container" v-for="(post, index) in posts" :key="post._id">
+        <section class="post-container" v-for="(post, index) in posts.slice(0, count)" :key="post._id">
             <header class="post-header">
                 <div class="profile-pic">
                     <img src="../assets/14572760_1114764891941494_7246158643300506908_n.jpg" alt="">
@@ -23,12 +23,19 @@
                 <p>{{ post.content }}</p>
             </section>
             <footer class="post-footer">
-                <button @click="increaseLike(post)">
-                    <font-awesome-icon icon="fa-solid fa-thumbs-up" />
-                </button>
-                <span>{{ post.like }}</span>
+                <div>
+                    <button @click="increaseLike(post)">
+                        <font-awesome-icon icon="fa-solid fa-thumbs-up" />
+                    </button>
+                    <span>{{ post.like }}</span>
+                </div>
             </footer>
         </section>
+
+        <div class="see-more-container" @click="$emit('showMore')">
+            <button class="see-more-button" v-if="count < posts.length">See More</button>
+            <button class="see-more-button" v-if="count >= posts.length && count > 6" @click="returnToTop">Latest Post</button>
+        </div>
 
         <button class="add-button" data-hover="Create a new post" @click="showPostModal = true">
             <font-awesome-icon icon="fa-solid fa-plus" />
@@ -53,7 +60,8 @@
         name: 'PostsComponent',
         props: [
             'posts',
-            'apiUrl'
+            'apiUrl',
+            'count'
         ],
         components: {
             'AddPostForm-component': AddPostForm,
@@ -62,7 +70,7 @@
         },
 
         data () {
-            return {
+            return { 
                 showPostModal: false,
                 showUpdateModal: false,
                 currentPost: undefined,
@@ -75,14 +83,17 @@
                 console.log(newPost)
                 this.$emit('newPost', newPost);
             },
+
             handleUpdateFormSubmission(updatedPost) {
                 this.showUpdateModal = false;
                 this.$emit('updatedPost', updatedPost);
             },
+
             updatePost(post) {
                 this.currentPost = post;
                 this.showUpdateModal = true;
             },
+
             async increaseLike(post) {
                 try {
                     post.like++
@@ -112,11 +123,11 @@
                 }
                 
             },
+
+            returnToTop: function () {
+            window.scrollTo(0, 0)
+            },
         },
-
-        mounted() {
-
-        }
     }
 </script>
 
@@ -128,7 +139,7 @@
         margin: 20px auto;
         padding: 20px;
         width: 40%;
-        min-width: 500px;
+        min-width: 450px;
         background-color: white;
         border-radius: 12px;
         box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.2);
@@ -211,6 +222,7 @@
                 button {
                     border: none;
                     background-color: #f1f1f1;
+                    margin-right: 10px;
                     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
                     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
                 }
@@ -280,6 +292,45 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
         }
 
+        .see-more-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding-bottom: 20px;
 
+            .see-more-button {
+                padding: 20px;
+                font-family: inherit;
+                font-size: 15px;
+                font-weight: bold;
+                height: 50px;
+                border-radius: 10px;
+                cursor: pointer;
+                line-height: .9;
+
+                border: none;
+                background-color: #f1f1f1;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+                background-color: white;
+                box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.4);
+            }
+
+            .see-more-button:hover:before {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .see-more-button:hover {
+                background-color: #e6e6e6;
+                box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            }
+
+            .see-more-button:active {
+                background-color: #e6e6e6;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            }
+
+        }
     }
 </style>

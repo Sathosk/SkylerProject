@@ -46,7 +46,7 @@ module.exports = {
             res.send({success: true, result: posts});
           } catch (err) {
             console.error(err);
-            res.send({success: false, result: err})
+            res.send({success: false, reason: err})
           }
     }
 }

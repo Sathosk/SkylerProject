@@ -1,6 +1,6 @@
 <template>
   <header-component/>
-  <posts-component :posts="posts" :apiUrl="API_URL" @newPost="newPost" @removePost="removePost" @updatedPost="updatedPost"/>
+  <posts-component :count="postCount" :posts="posts" :apiUrl="API_URL" @newPost="newPost" @removePost="removePost" @updatedPost="updatedPost" @showMore="this.showMore"/>
 
 </template>
 
@@ -18,7 +18,8 @@
     data() {
       return {
         API_URL: "http://localhost:3000/api/",
-        posts: []
+        posts: [],
+        postCount: 6,
       }
     },
 
@@ -29,6 +30,10 @@
             
             this.posts = posts.result;
             this.sortPost(this.posts);
+        },
+
+        showMore: function () {
+            this.postCount +=2
         },
 
         newPost: function (newPost) {
