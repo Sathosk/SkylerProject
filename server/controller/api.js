@@ -3,11 +3,16 @@ const Posts = require('../models/Posts');
 module.exports = {
     newPost: async (req, res) => {
         try {
-            const result = await Posts.create(req.body);
-            res.status(201).send({result: result});
+            const post = new Posts(req.body);
+            await post.validate();
+            const result = await post.save();
+            res.status(201).send({success: true, result: result});
         } catch (err) {
+            if (err.name === 'ValidationError') {
+                return res.status(400).send(err.errors.content.message);
+            }
             console.error(err);
-            res.status(422).send({success: false});
+            res.status(422).send({success: false, reason: err});
         }
     },
 

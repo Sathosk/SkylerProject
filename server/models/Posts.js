@@ -11,6 +11,13 @@ const PostagemSchema = new mongoose.Schema({
     },
     content: {
         type: String,
+        validate: {
+            validator: function(value) {
+                return value.trim().length > 0;
+            },
+            message: 'Content cannot be only whitespace'
+        },
+        trim: true,
         required: true
     },
     like: {

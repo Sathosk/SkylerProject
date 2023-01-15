@@ -1,6 +1,6 @@
 <template>
     <section class="main-content">
-        <section class="post-container" v-for="post in posts" :key="post._id">
+        <section class="post-container" v-for="(post, index) in posts" :key="post._id">
             <header class="post-header">
                 <div class="profile-pic">
                     <img src="../assets/14572760_1114764891941494_7246158643300506908_n.jpg" alt="">
@@ -10,10 +10,10 @@
                     <b>{{ post.email }}</b>
                 </div>
                 <div class="edit-delete-button">
-                    <button class="update-delete-button">
+                    <button class="update-delete-button" @click=updatePost(post)>
                         <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                     </button>
-                    <button class="update-delete-button">
+                    <button class="update-delete-button" @click="$emit('removePost', index)">
                         <font-awesome-icon icon="fa-solid fa-trash" />
                     </button>
                 </div>
@@ -23,26 +23,31 @@
                 <p>{{ post.content }}</p>
             </section>
             <footer class="post-footer">
-                <button>
+                <button @click="increaseLike(post)">
                     <font-awesome-icon icon="fa-solid fa-thumbs-up" />
                 </button>
                 <span>{{ post.like }}</span>
             </footer>
         </section>
 
-        <button class="add-button" data-hover="Create a new post" @click="showModal = true">
+        <button class="add-button" data-hover="Create a new post" @click="showPostModal = true">
             <font-awesome-icon icon="fa-solid fa-plus" />
         </button>
 
 
         <transition name="fade">
-            <modalForm-component v-if="showModal" @form-submitted="handleFormSubmission" @close-modal="showModal = false" :apiUrl="apiUrl"/>
+            <AddPostForm-component v-if="showPostModal" @form-submitted="handleFormSubmission" @close-modal="showPostModal = false" :apiUrl="apiUrl"/>
+        </transition>
+
+        <transition name="fade">
+            <UpdatePostForm-component v-if="showUpdateModal" @form-submitted="handleUpdateFormSubmission" @close-updateModal="showUpdateModal = false" :apiUrl="apiUrl" :currentPost="currentPost"/>
         </transition>
     </section>
 </template>
 
 <script>
-    import ModalForm from './Modal.vue'
+    import AddPostForm from './AddPostForm.vue'
+    import UpdatePostForm from './UpdatePostForm.vue'
 
     export default {
         name: 'PostsComponent',
@@ -51,20 +56,62 @@
             'apiUrl'
         ],
         components: {
-            'modalForm-component': ModalForm,
+            'AddPostForm-component': AddPostForm,
+            'UpdatePostForm-component': UpdatePostForm,
+
         },
 
         data () {
             return {
-                showModal: false,
+                showPostModal: false,
+                showUpdateModal: false,
+                currentPost: undefined,
             }
         },
 
         methods: {
             handleFormSubmission(newPost) {
-                this.showModal = false;
+                this.showPostModal = false;
+                console.log(newPost)
                 this.$emit('newPost', newPost);
-            }
+            },
+            handleUpdateFormSubmission(updatedPost) {
+                this.showUpdateModal = false;
+                this.$emit('updatedPost', updatedPost);
+            },
+            updatePost(post) {
+                this.currentPost = post;
+                this.showUpdateModal = true;
+            },
+            async increaseLike(post) {
+                try {
+                    post.like++
+                    const payload = {
+                        _id: post._id,
+                        like: post.like
+                    }
+
+                    const response = await fetch(`${this.apiUrl}post/update`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await response.json();
+                    console.log(data)
+
+                    if (response.ok) {
+                        this.$emit('form-submitted');
+                    }
+                    
+
+                } catch (error) {
+                    console.error(error)
+                }
+                
+            },
         },
 
         mounted() {
@@ -86,94 +133,98 @@
         border-radius: 12px;
         box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.2);
 
-        .post-header {
-            
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            height: 50px;
-            background: white;
-
-            .profile-pic {
-                display: flex;
-                align-items: center;
-
-                img {
-                    width: 45px;
-                    height: 45px;
-                    border-radius: 50%;
-                }
-            }
-
-            .name-email {
-                flex: 2;
-                h4 {
-                    line-height: 1;
-                    font-size: 20px;
-                    font-weight: bold;
-                }
-
-                b {
-                    font-size: 13px;
-                    font-weight: 600;
-                    color: rgb(101, 103, 107);
-                }
-            }
-
-            .edit-delete-button {
-
+            .post-header {
+                
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                gap: 15px;
+                height: 50px;
+                background: white;
+
+                .profile-pic {
+                    display: flex;
+                    align-items: center;
+
+                    img {
+                        width: 45px;
+                        height: 45px;
+                        border-radius: 50%;
+                    }
+                }
+
+                .name-email {
+                    flex: 2;
+                    h4 {
+                        line-height: 1;
+                        font-size: 20px;
+                        font-weight: bold;
+                    }
+
+                    b {
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: rgb(101, 103, 107);
+                    }
+                }
+
+                .edit-delete-button {
+
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 10px;
+
+                    .update-delete-button {
+                        padding: 0;
+                        border: none;
+                        background-color: inherit;
+                        cursor: pointer;
+                    }
+                    
+                    svg {
+                        width: 20px;
+                        height: 20px;
+                    }
+                }
+            }
+
+            .divider {
+                width: 100%;
+                margin: 20px auto;
+                height: 1px;
+                background-color: rgba(167, 164, 164, 0.4);
+            }
+            .post-content {
+                width: 100%;
+                margin-bottom: 10px;
+                word-wrap: break-word;
+                white-space: pre-wrap;
+            }
+
+            .post-footer {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
                 gap: 10px;
 
-                .update-delete-button {
-                    padding: 0;
+                button {
                     border: none;
-                    background-color: inherit;
-                    cursor: pointer;
+                    background-color: #f1f1f1;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
                 }
-                
-                svg {
-                    width: 20px;
-                    height: 20px;
+
+                button:hover {
+                    background-color: #e6e6e6;
+                    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+                }
+
+                button:active {
+                    background-color: #e6e6e6;
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
                 }
             }
-        }
-
-        .divider {
-            width: 100%;
-            margin: 20px auto;
-            height: 1px;
-            background-color: rgba(167, 164, 164, 0.4);
-        }
-        .post-content {
-        }
-
-        .post-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 10px;
-
-            button {
-                border: none;
-                background-color: #f1f1f1;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-                transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-            }
-
-            button:hover {
-                background-color: #e6e6e6;
-                box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-            }
-
-            button:active {
-                background-color: #e6e6e6;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-            }
-        }
         }
 
         .add-button {

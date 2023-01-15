@@ -13,6 +13,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
 library.add(faMagnifyingGlass)
@@ -20,6 +21,7 @@ library.add(faTrash)
 library.add(faPenToSquare)
 library.add(faThumbsUp)
 library.add(faPlus)
+library.add(faXmark)
 
 
 import './assets/main.css'

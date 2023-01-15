@@ -1,6 +1,6 @@
 <template>
   <header-component/>
-  <posts-component :posts="posts" :apiUrl="API_URL" @newPost="newPost"/>
+  <posts-component :posts="posts" :apiUrl="API_URL" @newPost="newPost" @removePost="removePost" @updatedPost="updatedPost"/>
 
 </template>
 
@@ -23,16 +23,49 @@
     },
 
     methods: {
-      getPosts: async function () {
-        const response = await fetch(this.API_URL + "post/all")
-        const posts = await response.json();
-        
-        this.posts = posts.result;
+        getPosts: async function () {
+            const response = await fetch(this.API_URL + "post/all")
+            const posts = await response.json();
+            
+            this.posts = posts.result;
+            this.sortPost(this.posts);
+        },
+
+        newPost: function (newPost) {
+            this.posts.push(newPost)
+            this.sortPost(this.posts);
+        },
+
+        updatedPost: function(post) {
+            const index = this.posts.findIndex(obj => obj._id === post._id);
+            this.posts[index] = post;
+        },
+
+        sortPost(posts) {
+            posts.sort((a,b) => {
+                if (a.timeStamp < b.timeStamp) return 1;
+                if (a.timeStamp > b.timeStamp) return -1;
+                return 0;
+            })
       },
 
-      newPost: function (newPost) {
-        this.posts.push(newPost)
-      }
+        async removePost(index) {
+            try {
+                const response = await fetch(`${this.API_URL}post/remove`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({_id: this.posts[index]._id})
+                });
+
+                const data = await response.json();
+                this.posts.splice(index, 1); 
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
     },
 
     beforeMount() {
