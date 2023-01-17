@@ -100,6 +100,7 @@
 
                 .icon {
                     position: absolute;
+                    color: #13425e;
                     width: 25px;
                     margin: 10px 7px 10px 7px;
                     z-index: 111;

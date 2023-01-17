@@ -61,7 +61,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({_id: this.posts[index]._id})
+                    body: JSON.stringify({_id: this.posts[index]._id, cloudinaryId: this.posts[index].cloudinaryId})
                 });
 
                 const data = await response.json();

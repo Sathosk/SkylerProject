@@ -5,10 +5,12 @@ const PostagemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
     email: {
         type: String,
-        require: true
+        required: true
     },
+
     content: {
         type: String,
         validate: {
@@ -20,6 +22,15 @@ const PostagemSchema = new mongoose.Schema({
         trim: true,
         required: true
     },
+
+    profilePic: {
+        type: String,
+    },
+
+    cloudinaryId: {
+        type: String,
+    },
+    
     like: {
         type: Number,
         default: 0

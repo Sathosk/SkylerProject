@@ -4,17 +4,25 @@ const cloudinary = require("../middleware/cloudinary");
 module.exports = {
     newPost: async (req, res) => {
         try {
+            let cloudinaryResult = null;
+
             if (req.file) {
-                const cloudinaryResult = await cloudinary.uploader.upload(req.file.path)
-                console.log(cloudinaryResult.json())
+                cloudinaryResult = await cloudinary.uploader.upload(req.file.path)
             }
             
+            const post = new Posts({
+                name: req.body.name,
+                email: req.body.email,
+                content: req.body.content,
+                profilePic: cloudinaryResult ? cloudinaryResult.secure_url : null,
+                cloudinaryId: cloudinaryResult ? cloudinaryResult.public_id : null
+            });
 
-            const post = new Posts(req.body);
             await post.validate();
             const result = await post.save();
             res.status(201).send({success: true, result: result});
         } catch (err) {
+            console.log(err)
             if (err.name === 'ValidationError') {
                 console.log(err)
                 return res.status(400).json({message: 'Validation Error'});
@@ -45,6 +53,16 @@ module.exports = {
 
     deletePost: async (req, res) => {
         try {
+            if (req.body.cloudinaryId) {
+                cloudinary.uploader.destroy(req.body.cloudinaryId, function(error, result) {
+                    if(!error) {
+                        console.log(result);
+                    } else {
+                        console.log(error);
+                    }
+                });
+            }
+
             const result = await Posts.deleteOne({ _id: req.body._id });
             res.send({result: result});
         } catch (err) {

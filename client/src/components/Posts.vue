@@ -3,18 +3,18 @@
         <section class="post-container" v-for="(post, index) in posts.slice(0, count)" :key="post._id">
             <header class="post-header">
                 <div class="profile-pic">
-                    <img src="../assets/14572760_1114764891941494_7246158643300506908_n.jpg" alt="">
+                    <img :src="post.profilePic ? post.profilePic : '/src/assets/defaultProfile.png'" alt="profile picture">
                 </div>
                 <div class="name-email">
-                    <h4>{{ post.name }}</h4>
+                    <h4>{{ post.name[0].toUpperCase() + post.name.slice(1)}}</h4>
                     <b>{{ post.email }}</b>
                 </div>
                 <div class="edit-delete-button">
                     <button class="update-delete-button" @click=updatePost(post)>
-                        <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+                        <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-color"/>
                     </button>
                     <button class="update-delete-button" @click="$emit('removePost', index)">
-                        <font-awesome-icon icon="fa-solid fa-trash" />
+                        <font-awesome-icon icon="fa-solid fa-trash" class="icon-color"/>
                     </button>
                 </div>
             </header>
@@ -25,7 +25,7 @@
             <footer class="post-footer">
                 <div>
                     <button @click="increaseLike(post)">
-                        <font-awesome-icon icon="fa-solid fa-thumbs-up" />
+                        <font-awesome-icon icon="fa-solid fa-thumbs-up" class="icon-color"/>
                     </button>
                     <span>{{ post.like }}</span>
                 </div>
@@ -38,7 +38,7 @@
         </div>
 
         <button class="add-button" data-hover="Create a new post" @click="showPostModal = true">
-            <font-awesome-icon icon="fa-solid fa-plus" />
+            <font-awesome-icon icon="fa-solid fa-plus" class="icon-color"/>
         </button>
 
 
@@ -81,7 +81,7 @@
 
         methods: {
             showErrorAlert(error) {
-                if (error.message = 'Validation Error') alert('Please insert a name, email and message.')
+                if (error.message = 'Validation Error') alert('Please insert a name, email.')
             },
 
             handleFormSubmission(newPost) {
@@ -139,6 +139,10 @@
     .main-content {
         width: 100%;
 
+        .icon-color {
+            color: #13425e;
+        }
+
         .post-container {
         margin: 20px auto;
         padding: 20px;
@@ -146,7 +150,7 @@
         min-width: 450px;
         background-color: white;
         border-radius: 12px;
-        box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.3);
 
             .post-header {
                 
@@ -160,11 +164,15 @@
                 .profile-pic {
                     display: flex;
                     align-items: center;
+                    cursor: pointer;
+                    
 
                     img {
                         width: 45px;
                         height: 45px;
+                        object-fit: contain;
                         border-radius: 50%;
+                        box-shadow: 2px 2px 12px 0 rgba(0, 0, 0, 0.3);
                     }
                 }
 
@@ -208,7 +216,8 @@
                 width: 100%;
                 margin: 20px auto;
                 height: 1px;
-                background-color: rgba(167, 164, 164, 0.4);
+                background-color: #216288;
+                opacity: 0.2;
             }
             .post-content {
                 width: 100%;
@@ -258,9 +267,7 @@
 
             border: none;
             background-color: #f1f1f1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
             transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-            background-color: white;
             box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.4);
         }
 
@@ -307,6 +314,7 @@
                 font-family: inherit;
                 font-size: 15px;
                 font-weight: bold;
+                color: #13425e;
                 height: 50px;
                 border-radius: 10px;
                 cursor: pointer;
@@ -314,9 +322,7 @@
 
                 border: none;
                 background-color: #f1f1f1;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
                 transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-                background-color: white;
                 box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.4);
             }
 
