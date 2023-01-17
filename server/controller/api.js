@@ -1,15 +1,23 @@
 const Posts = require('../models/Posts');
+const cloudinary = require("../middleware/cloudinary");
 
 module.exports = {
     newPost: async (req, res) => {
         try {
+            if (req.file) {
+                const cloudinaryResult = await cloudinary.uploader.upload(req.file.path)
+                console.log(cloudinaryResult.json())
+            }
+            
+
             const post = new Posts(req.body);
             await post.validate();
             const result = await post.save();
             res.status(201).send({success: true, result: result});
         } catch (err) {
             if (err.name === 'ValidationError') {
-                return res.status(400).send(err.errors.content.message);
+                console.log(err)
+                return res.status(400).json({message: 'Validation Error'});
             }
             console.error(err);
             res.status(422).send({success: false, reason: err});
@@ -25,6 +33,11 @@ module.exports = {
 
             res.status(200).send({result: result})
           } catch (err) {
+            console.log(err.name)
+            if (err.name === 'ValidationError') {
+                console.log(err)
+                return res.status(400).json({message: 'Validation Error'});
+            }
             console.error(err);
             res.status(500).send({success: false});
           }

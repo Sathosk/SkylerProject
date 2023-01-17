@@ -43,11 +43,13 @@
 
 
         <transition name="fade">
-            <AddPostForm-component v-if="showPostModal" @form-submitted="handleFormSubmission" @close-modal="showPostModal = false" :apiUrl="apiUrl"/>
+            <AddPostForm-component v-if="showPostModal" @form-submission-error="showErrorAlert" @form-submitted="handleFormSubmission" @close-modal="showPostModal = false" :apiUrl="apiUrl"/>
         </transition>
 
         <transition name="fade">
-            <UpdatePostForm-component v-if="showUpdateModal" @form-submitted="handleUpdateFormSubmission" @close-updateModal="showUpdateModal = false" :apiUrl="apiUrl" :currentPost="currentPost"/>
+            <UpdatePostForm-component v-if="showUpdateModal" 
+            @form-submission-error="showErrorAlert" @form-submitted="handleUpdateFormSubmission" @close-updateModal="showUpdateModal = false" 
+            :apiUrl="apiUrl" :currentPost="currentPost"/>
         </transition>
     </section>
 </template>
@@ -78,9 +80,12 @@
         },
 
         methods: {
+            showErrorAlert(error) {
+                if (error.message = 'Validation Error') alert('Please insert a name, email and message.')
+            },
+
             handleFormSubmission(newPost) {
                 this.showPostModal = false;
-                console.log(newPost)
                 this.$emit('newPost', newPost);
             },
 
@@ -111,7 +116,6 @@
                     });
 
                     const data = await response.json();
-                    console.log(data)
 
                     if (response.ok) {
                         this.$emit('form-submitted');

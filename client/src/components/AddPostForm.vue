@@ -19,7 +19,7 @@
                         </li>
 
                         <li style="margin-bottom: 0">
-                            <input type="submit" value="Send Message" v-if="!submitted"/>
+                            <input type="submit" value="Send Message" :disabled="submitted"/>
                         </li>
                     </ul>
                 </form>
@@ -61,17 +61,17 @@
 
                     const data = await response.json();
 
-                    console.log(data)
+                    if (data.message === 'Validation Error') throw new Error('Validation Error');
 
                     if (response.ok) {
-                        //console.log(data)
                         this.$emit('form-submitted', data.result);
                     }
 
-                    this.submitting = false;
+                    this.submitted = false;
                 } catch (error) {
-                    console.error(error)
-                    this.submitting = false;
+                    this.$emit('form-submission-error', error);
+                    console.error(error);
+                    this.submitted = false;
                 }
             }
         }

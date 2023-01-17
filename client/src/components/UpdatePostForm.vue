@@ -19,7 +19,7 @@
                     </li>
 
                     <li style="margin-bottom: 0">
-                        <input type="submit" value="Update Post" v-if="!submitted"/>
+                        <input type="submit" value="Update Post" :disabled="submitted"/>
                     </li>
                 </ul>
             </form>
@@ -63,12 +63,16 @@
 
                     const data = await response.json();
 
+                    if (data.message === 'Validation Error') throw new Error('Validation Error')
+
+                    console.log('Post Updated')
                     if (response.ok) {
                         this.$emit('form-submitted', data.result);
                     }
                     
                     this.submitted = false;
                 } catch (error) {
+                    this.$emit('form-submission-error', error);
                     console.error(error);
                     this.submitted = false;
                 }

@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const upload = require("../middleware/multer");
 const apiController = require('../controller/api');
 
 // @desc Post/Create new post
 // @route POST api/post/createPost
 
-router.post('/post/createPost', apiController.newPost);
+router.post('/post/createPost', upload.single('profile-pic'),apiController.newPost);
 
 // @desc Get all posts
 // @route GET api/post/all
