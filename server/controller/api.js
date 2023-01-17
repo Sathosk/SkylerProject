@@ -74,10 +74,15 @@ module.exports = {
     getAllPosts: async (req, res) => {
         try {
             const posts = await Posts.find();
-            res.send({success: true, result: posts});
+            if (!posts.length) {
+                res.status(200).send({ message: "No documents found", result: posts});
+            } else {
+                console.log(posts)
+                res.status(200).send({ result: posts });
+            }
           } catch (err) {
             console.error(err);
-            res.send({success: false, reason: err})
+            res.status(500).send({reason: err})
           }
     }
 }
