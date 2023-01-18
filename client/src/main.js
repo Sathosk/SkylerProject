@@ -23,7 +23,6 @@ library.add(faThumbsUp)
 library.add(faPlus)
 library.add(faXmark)
 
-
 import './assets/main.css'
 
 createApp(App)

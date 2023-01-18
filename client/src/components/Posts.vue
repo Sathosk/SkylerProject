@@ -3,7 +3,7 @@
         <section class="post-container" v-for="(post, index) in posts.slice(0, count)" :key="post._id">
             <header class="post-header">
                 <div class="profile-pic">
-                    <img :src="post.profilePic ? post.profilePic : '/src/assets/defaultProfile.png'" alt="profile picture">
+                    <img :src="post.profilePic ? post.profilePic : '/src/assets/images/defaultProfile.png'" alt="profile picture">
                 </div>
                 <div class="name-email">
                     <h4>{{ post.name[0].toUpperCase() + post.name.slice(1)}}</h4>
@@ -23,6 +23,7 @@
                 <p>{{ post.content }}</p>
             </section>
             <footer class="post-footer">
+                <span class="timestamp"><b>Created at: </b>{{ convertTimeStamp(post.timeStamp) }}</span>
                 <div>
                     <button @click="increaseLike(post)">
                         <font-awesome-icon icon="fa-solid fa-thumbs-up" class="icon-color"/>
@@ -76,29 +77,41 @@
                 showPostModal: false,
                 showUpdateModal: false,
                 currentPost: undefined,
+                convertedTimeStamp: ''
             }
         },
 
         methods: {
-            showErrorAlert(error) {
-                if (error.message = 'Validation Error') alert('Please insert a name, email.')
+            // Method to convert date format
+            convertTimeStamp(timeStamp) {
+                let date = new Date(timeStamp);
+               return date.toString();
             },
 
+            // Method to show alert if field is invalid
+            showErrorAlert(error) {
+                if (error.message = 'Validation Error') alert('Please insert a name, email.');
+            },
+
+            // Method to close modal and send new post to app.vue
             handleFormSubmission(newPost) {
                 this.showPostModal = false;
                 this.$emit('newPost', newPost);
             },
 
+            // Method to close modal and send updated post to app.vue
             handleUpdateFormSubmission(updatedPost) {
                 this.showUpdateModal = false;
                 this.$emit('updatedPost', updatedPost);
             },
 
+            // Method to open UpdatePostForm and send current post to UpdatePostForm component
             updatePost(post) {
                 this.currentPost = post;
                 this.showUpdateModal = true;
             },
 
+            // Method to increase likes locally and on database
             async increaseLike(post) {
                 try {
                     post.like++
@@ -123,13 +136,14 @@
                     
 
                 } catch (error) {
-                    console.error(error)
+                    console.error(error);
                 }
                 
             },
 
+            // Method to show latest posts
             returnToTop: function () {
-            window.scrollTo(0, 0)
+                window.scrollTo(0, 0);
             },
         },
     }
@@ -170,7 +184,7 @@
                     img {
                         width: 45px;
                         height: 45px;
-                        object-fit: contain;
+                        object-fit: cover;
                         border-radius: 50%;
                         box-shadow: 2px 2px 12px 0 rgba(0, 0, 0, 0.3);
                     }
@@ -221,16 +235,24 @@
             }
             .post-content {
                 width: 100%;
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 word-wrap: break-word;
                 white-space: pre-wrap;
             }
 
             .post-footer {
                 display: flex;
-                justify-content: flex-end;
+                justify-content: space-between;
                 align-items: center;
                 gap: 10px;
+
+                .timestamp {
+                    font-size: 11px;
+                }
+
+                .timestamp  b{
+                    font-weight: bold;
+                }
 
                 button {
                     border: none;

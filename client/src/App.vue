@@ -1,7 +1,8 @@
 <template>
+
   <header-component/>
   <posts-component :count="postCount" :posts="posts" :apiUrl="API_URL" @newPost="newPost" @removePost="removePost" @updatedPost="updatedPost" @showMore="this.showMore"/>
-
+  
 </template>
 
 <script>
@@ -17,35 +18,40 @@
 
     data() {
       return {
-        API_URL: "http://localhost:3000/api/",
-        posts: [],
-        postCount: 6,
+        API_URL: "http://localhost:3000/api/", // API base URL
+        posts: [], // All posts array
+        postCount: 6, // Variable to limit number of posts on the page
       }
     },
 
     methods: {
+        // Method to fetch all posts from API and render client side
         getPosts: async function () {
             const response = await fetch(this.API_URL + "post/all")
-            const posts = await response.json();
+            const posts = await response.json();          
             
             this.posts = posts.result;
             this.sortPost(this.posts);
         },
 
+        // Method to increase number of posts showing on the webpage
         showMore: function () {
             this.postCount +=2
         },
 
+        // Method do add new posts client side
         newPost: function (newPost) {
             this.posts.push(newPost)
             this.sortPost(this.posts);
         },
 
+        // Method to update posts client side
         updatedPost: function(post) {
             const index = this.posts.findIndex(obj => obj._id === post._id);
             this.posts[index] = post;
         },
 
+        // Method to sort posts client side
         sortPost(posts) {
             posts.sort((a,b) => {
                 if (a.timeStamp < b.timeStamp) return 1;
@@ -54,6 +60,7 @@
             })
       },
 
+        // Method to delete posts
         async removePost(index) {
             try {
                 const response = await fetch(`${this.API_URL}post/remove`, {
@@ -64,7 +71,6 @@
                     body: JSON.stringify({_id: this.posts[index]._id, cloudinaryId: this.posts[index].cloudinaryId})
                 });
 
-                const data = await response.json();
                 this.posts.splice(index, 1); 
             } catch (error) {
                 console.error(error);
