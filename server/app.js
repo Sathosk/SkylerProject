@@ -23,10 +23,6 @@ connectDB()
 // Initialize cors
 app.use(cors());
 
-// app.post('/api/createPost', (req, res) => {
-//     console.log(req.body);
-// })
-
 // Routes
 app.use('/', require('./routes/indexRoute'));
 app.use('/api', require('./routes/apiRoute'));

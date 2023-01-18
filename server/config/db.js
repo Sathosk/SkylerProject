@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 require("dotenv").config({path: '../config/config.env'});
 
+// Mongoose connection setup
 const connectDB = async () => {
     try {
         mongoose.set("strictQuery", true);

@@ -1,6 +1,8 @@
 const multer = require("multer");
 const path = require("path");
 
+
+// Multer file path configuration
 module.exports = multer({
   storage: multer.diskStorage({}),
   fileFilter: (req, file, cb) => {

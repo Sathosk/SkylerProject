@@ -2,6 +2,7 @@ const Posts = require('../models/Posts');
 const cloudinary = require("../middleware/cloudinary");
 
 module.exports = {
+    // Create post controller
     newPost: async (req, res) => {
         try {
             let cloudinaryResult = null;
@@ -20,18 +21,20 @@ module.exports = {
 
             await post.validate();
             const result = await post.save();
-            res.status(201).send({success: true, result: result});
+
+            res.status(201).send({result: result});
         } catch (err) {
             console.log(err)
             if (err.name === 'ValidationError') {
                 console.log(err)
-                return res.status(400).json({message: 'Validation Error'});
+                return res.status(400).send({message: 'Validation Error'});
             }
             console.error(err);
-            res.status(422).send({success: false, reason: err});
+            res.status(422).send({reason: err});
         }
     },
 
+    // Update post controller
     updatePost: async (req, res) => {
         try {
             const result = await Posts.findOneAndUpdate({ _id: req.body._id }, req.body, {
@@ -41,7 +44,6 @@ module.exports = {
 
             res.status(200).send({result: result})
           } catch (err) {
-            console.log(err.name)
             if (err.name === 'ValidationError') {
                 console.log(err)
                 return res.status(400).json({message: 'Validation Error'});
@@ -51,6 +53,7 @@ module.exports = {
           }
     },
 
+    // Delete post controller
     deletePost: async (req, res) => {
         try {
             if (req.body.cloudinaryId) {
@@ -64,20 +67,20 @@ module.exports = {
             }
 
             const result = await Posts.deleteOne({ _id: req.body._id });
-            res.send({result: result});
+            res.status(202).send();
         } catch (err) {
             console.error(err);
             res.status(500).send({success: false});
         }
     },
 
+    // Get all posts controller
     getAllPosts: async (req, res) => {
         try {
             const posts = await Posts.find();
             if (!posts.length) {
                 res.status(200).send({ message: "No documents found", result: posts});
             } else {
-                console.log(posts)
                 res.status(200).send({ result: posts });
             }
           } catch (err) {
